@@ -4,6 +4,7 @@
     push:
       branches:
         - dev
+        - main
   env:
 #    EB_PACK_S3_BUCKET_NAME: elasticbeanstalk-us-east-1-626517541844
 #    EB_ENVNAME: Dev-env
