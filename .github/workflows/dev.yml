@@ -54,7 +54,7 @@
             --header 'content-type: application/json' \
             --data '{
                       "message": "This will be the incident message",
-                      "description": "${{ github.run_id }} <- run id '''''This issue was automatically created by the GitHub Action workflow **${{ github.workflow }}**. \n\n due to failure in run: _${{ github.run_id }}_.''''  ",
+                      "description": "This issue was automatically created by the GitHub Action workflow **${{ github.workflow }}**. \n\n due to failure in run: _${{ github.run_id }} ",
                       "status": "trigger",
                       "event_id": "6"
                     }'
