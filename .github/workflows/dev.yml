@@ -70,13 +70,14 @@
         #  run:  aws elasticbeanstalk update-environment --environment-name ${{ env.EB_ENVNAME }} --version-label "Ver-${{ github.sha }}"
           run:  aws elasticbeanstalk update-environment --environment-name my-env --option-settings Namespace=aws:elasticbeanstalk:application:environment,OptionName=PARAM1,Value=ParamValue
 
-##use when creating incident in squadcast
+##use when creating incident in squadcast using webhook
 
-        - name: Invoke deployment hook
-          uses: distributhor/workflow-webhook@v2
-          env:
-            webhook_url: ${{ secrets.WEBHOOK_URL }}
-            webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
+#
+#        - name: Invoke deployment hook
+#          uses: distributhor/workflow-webhook@v2
+#          env:
+#            webhook_url: ${{ secrets.WEBHOOK_URL }}
+#            webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
 
 ##use when creating ticket in jira
 #
@@ -93,6 +94,20 @@
 #          to: alert@streamvector-inc.incidents.squadcast.com
 #          # from email name
 #          from: Tiger-Global-Bain
+
+        - name: Step To run on failure
+          if: ${{ failure() }}
+          run: |
+            curl --request POST \
+            --url https://https://api.squadcast.com/v2/incidents/api/b354e4b23608623b7c0e07481beb8fbba702c70f \
+#            --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+            --header 'content-type: application/json' \
+            --data '{
+                      "message": "This will be the incident message",
+                      "description": "${{ github.run_id }} <- run id '''''This issue was automatically created by the GitHub Action workflow **${{ github.workflow }}**. \n\n due to failure in run: _${{ github.run_id }}_.''''  ",
+                      "status": "trigger",
+                      "event_id": "6"
+                    }'
 
 
 #For Automatic Cred.
