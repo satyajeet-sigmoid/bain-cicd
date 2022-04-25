@@ -50,7 +50,7 @@
           if: ${{ failure() }}
           run: |
             curl --request POST \
-            --url //https://api.squadcast.com/v2/incidents/api/b354e4b23608623b7c0e07481beb8fbba702c70f \
+            --url https://api.squadcast.com/v2/incidents/api/b354e4b23608623b7c0e07481beb8fbba702c70f \
             --header 'content-type: application/json' \
             --data '{
                       "message": "This will be the incident message",
