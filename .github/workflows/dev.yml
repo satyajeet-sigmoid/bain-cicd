@@ -70,25 +70,13 @@
         #  run:  aws elasticbeanstalk update-environment --environment-name ${{ env.EB_ENVNAME }} --version-label "Ver-${{ github.sha }}"
           run:  aws elasticbeanstalk update-environment --environment-name my-env --option-settings Namespace=aws:elasticbeanstalk:application:environment,OptionName=PARAM1,Value=ParamValue
 
-#For Automatic Cred.
-        # - name: Deploy to EB
-        #   uses: einaregilsson/beanstalk-deploy@v20
-        #   with:
-        #     aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        #     aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        #     application_name: ${{ secrets.EB_APP_NAME }}
-        #     environment_name: ${{secrets.ebenvname}}
-        #     version_label: ${{ github.sha }}
-        #     region: ${{ env.AWS_REGION_NAME }}
-        #     deployment_package: ....
-
 ##use when creating incident in squadcast
 
-      - name: Invoke deployment hook
-        uses: distributhor/workflow-webhook@v2
-        env:
-          webhook_url: ${{ secrets.WEBHOOK_URL }}
-          webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
+        - name: Invoke deployment hook
+          uses: distributhor/workflow-webhook@v2
+          env:
+            webhook_url: ${{ secrets.WEBHOOK_URL }}
+            webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
 
 ##use when creating ticket in jira
 #
@@ -105,6 +93,19 @@
 #          to: alert@streamvector-inc.incidents.squadcast.com
 #          # from email name
 #          from: Tiger-Global-Bain
+
+
+#For Automatic Cred.
+        # - name: Deploy to EB
+        #   uses: einaregilsson/beanstalk-deploy@v20
+        #   with:
+        #     aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        #     aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        #     application_name: ${{ secrets.EB_APP_NAME }}
+        #     environment_name: ${{secrets.ebenvname}}
+        #     version_label: ${{ github.sha }}
+        #     region: ${{ env.AWS_REGION_NAME }}
+        #     deployment_package: ....
 
 
 #For application Testing
