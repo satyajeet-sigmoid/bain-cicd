@@ -57,19 +57,23 @@
               aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
               aws-region: ${{ secrets.AWS_REGION_NAME }}
 
-        # - name: new eb-version
-        #   run:  |
-        #       aws elasticbeanstalk create-application-version \
-        #       --application-name ${{ env.EB_APPLICATION_VERSION }} \
-        #       --source-bundle S3Bucket="${{ env.EB_PACK_S3_BUCKET_NAME }}", S3Key="${{ env.DEPLOY_PACKAGENAME }}" \
-        #       --version-label "Ver-{{ github.sha }}"  \
-        #       --description "CommitSHA-${{ github.sha }} "
-        #       --auto-create-application
 
         - name: Deploy New App-Ver.
         #  run:  aws elasticbeanstalk update-environment --environment-name ${{ env.EB_ENVNAME }} --version-label "Ver-${{ github.sha }}"
           run:  aws elasticbeanstalk update-environment --environment-name my-env --option-settings Namespace=aws:elasticbeanstalk:application:environment,OptionName=PARAM1,Value=ParamValue
 
+        - name: Step To run on failure
+          if: ${{ failure() }}
+          run: |
+            curl --request POST \
+            --url https://https://api.squadcast.com/v2/incidents/api/b354e4b23608623b7c0e07481beb8fbba702c70f \
+            --header 'content-type: application/json' \
+            --data '{
+                      "message": "This will be the incident message",
+                      "description": "${{ github.run_id }} <- run id '''''This issue was automatically created by the GitHub Action workflow **${{ github.workflow }}**. \n\n due to failure in run: _${{ github.run_id }}_.''''  ",
+                      "status": "trigger",
+                      "event_id": "6"
+                    }'
 ##use when creating incident in squadcast using webhook
 
 #
@@ -95,19 +99,7 @@
 #          # from email name
 #          from: Tiger-Global-Bain
 
-        - name: Step To run on failure
-          if: ${{ failure() }}
-          run: |
-            curl --request POST \
-            --url https://https://api.squadcast.com/v2/incidents/api/b354e4b23608623b7c0e07481beb8fbba702c70f \
-#            --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
-            --header 'content-type: application/json' \
-            --data '{
-                      "message": "This will be the incident message",
-                      "description": "${{ github.run_id }} <- run id '''''This issue was automatically created by the GitHub Action workflow **${{ github.workflow }}**. \n\n due to failure in run: _${{ github.run_id }}_.''''  ",
-                      "status": "trigger",
-                      "event_id": "6"
-                    }'
+
 
 
 #For Automatic Cred.
@@ -144,3 +136,12 @@
 #       run: |
 #         ls -al
 
+
+        # - name: new eb-version
+        #   run:  |
+        #       aws elasticbeanstalk create-application-version \
+        #       --application-name ${{ env.EB_APPLICATION_VERSION }} \
+        #       --source-bundle S3Bucket="${{ env.EB_PACK_S3_BUCKET_NAME }}", S3Key="${{ env.DEPLOY_PACKAGENAME }}" \
+        #       --version-label "Ver-{{ github.sha }}"  \
+        #       --description "CommitSHA-${{ github.sha }} "
+        #       --auto-create-application
