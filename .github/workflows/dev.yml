@@ -45,6 +45,19 @@
             echo " done "
         - name:  CI
           run: echo "DONE CI PART"
+
+        - name: Step To run on failure of CI
+          if: ${{ failure() }}
+          run: |
+            curl --request POST \
+            --url https://https://api.squadcast.com/v2/incidents/api/b354e4b23608623b7c0e07481beb8fbba702c70f \
+            --header 'content-type: application/json' \
+            --data '{
+                      "message": "This will be the incident message",
+                      "description": "${{ github.run_id }} <- run id '''''This issue was automatically created by the GitHub Action workflow **${{ github.workflow }}**. \n\n due to failure in run: _${{ github.run_id }}_.''''  ",
+                      "status": "trigger",
+                      "event_id": "6"
+                    }'
           
     dev-cd:
       runs-on: ubuntu-latest
@@ -62,7 +75,7 @@
         #  run:  aws elasticbeanstalk update-environment --environment-name ${{ env.EB_ENVNAME }} --version-label "Ver-${{ github.sha }}"
           run:  aws elasticbeanstalk update-environment --environment-name my-env --option-settings Namespace=aws:elasticbeanstalk:application:environment,OptionName=PARAM1,Value=ParamValue
 
-        - name: Step To run on failure
+        - name: Step To run on failure of CD
           if: ${{ failure() }}
           run: |
             curl --request POST \
