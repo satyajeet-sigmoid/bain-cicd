@@ -5,6 +5,7 @@
       branches:
         - dev
         - main
+
   env:
 #    EB_PACK_S3_BUCKET_NAME: elasticbeanstalk-us-east-1-626517541844
 #    EB_ENVNAME: Dev-env
@@ -81,8 +82,29 @@
         #     region: ${{ env.AWS_REGION_NAME }}
         #     deployment_package: ....
 
-        - name:  CD
-          run: echo "DONE CD PART"
+##use when creating incident in squadcast
+
+      - name: Invoke deployment hook
+        uses: distributhor/workflow-webhook@v2
+        env:
+          webhook_url: ${{ secrets.WEBHOOK_URL }}
+          webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
+
+##use when creating ticket in jira
+#
+#      - name: Send mail
+#        if: always()
+#        uses: dawidd6/action-send-mail@v2
+#        with:
+#          server_address: smtp.gmail.com
+#          server_port: 465
+#          username: ${{ secrets.EMAIL_USERNAME }}
+#          password: ${{ secrets.EMAIL_PASSWORD }}
+#          subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
+#          body: ${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
+#          to: alert@streamvector-inc.incidents.squadcast.com
+#          # from email name
+#          from: Tiger-Global-Bain
 
 
 #For application Testing
