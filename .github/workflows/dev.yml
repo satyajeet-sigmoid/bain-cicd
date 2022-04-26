@@ -30,6 +30,7 @@
         - name: zip the s3 package
           run:  zip -r ${{env.DEPLOY_PACKAGENAME}} ./ -x *.git*  #flask-web-app
 
+
         - name: Config Aws Cred
           uses: aws-actions/configure-aws-credentials@v1
           with: 
