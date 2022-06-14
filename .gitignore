@@ -3,3 +3,4 @@ venv/*
 cwa.config
 .idea/*
 .DS_Store
+.idea
