@@ -65,7 +65,7 @@ jobs:
           --description "CommitSHA-${{ github.sha }}"
 
       - name: Updating ElasticBeanstalk Application
-        run : aws elasticbeanstlk update-environment --environment-name ${{ env.EB_ENVNAME }} --version-label "Ver-${{ github.sha }}"
+        run : aws elasticbeanstalk update-environment --environment-name ${{ env.EB_ENVNAME }} --version-label "Ver-${{ github.sha }}"
 
       - name:  CD
         run: echo "DONE CD PART"
