@@ -17,7 +17,7 @@ on:
       
 
 jobs:
-  my-cicd-pipeline:
+  my-ci-pipeline:
     runs-on: ubuntu-latest
 
     steps:
@@ -43,3 +43,29 @@ jobs:
 
       - name:  CI
         run: echo "DONE CI PART"
+
+  my-cd-pipeline:
+    runs-on: ubuntu-latest
+    needs : [my-ci-pipeline]
+    
+    steps:
+      - name: Config Aws Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with: 
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: ${{ secrets.AWS_REGION_NAME }}
+
+      - name: Creating New Version ElasticBeanstlak Application
+        run : |
+          aws elasticbeanstalk create-application-version \
+          -- application-name ${{ env.EB_APPLICATION_VERSION }} \
+          -- source-bundle S3Bucket="${{ env.EB_PACK_S3_BUCKET_NAME }}", S3Key="${{ env.DEPLOY_PACKAGENAME }}"" \
+          -- version-label "Ver-${{ github.sha }}" \
+          -- description "CommitSHA-${{ github.sha }}"
+
+      - name: Updating ElasticBeanstalk Application
+        run : aws elasticbeanstlk update-environment --environment-name ${{ env.EB_ENVNAME }} --version-label "Ver-${{ github.sha }}"
+
+      - name:  CD
+        run: echo "DONE CD PART"
