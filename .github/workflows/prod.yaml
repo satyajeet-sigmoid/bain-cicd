@@ -1,0 +1,45 @@
+
+
+name: Test-for-Dev-EBApplication
+
+env:
+  EB_PACK_S3_BUCKET_NAME: ${{secrets.s3_bucket_name}} #eb-flask-web
+  EB_APPLICATION_VERSION: ${{ secrets.EB_APP_NAME }} #flask-web current_directory
+  EB_ENVNAME: ${{secrets.ebenvname}} #flask-web-dev
+  DEPLOY_PACKAGENAME: ${{secrets.eb_packagename}}-${{github.sha}}.zip #flask-web-app
+  AWS_REGION_NAME: ${{secrets.AWS_REGION_NAME}} #us-east-1
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+      
+
+jobs:
+  my-cicd-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Git clone our Repo 
+        uses: actions/checkout@v1
+
+      - name: zip the s3 package
+        run:  zip -r ${{env.DEPLOY_PACKAGENAME}} ./ -x *.git* 
+
+      - name: Config Aws Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with: 
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: ${{ secrets.AWS_REGION_NAME }}
+
+      - name:  Copy to s3
+        run: |
+          ls -al
+          echo " copying the deploy package to s3 "
+          aws s3 cp ${{ env.DEPLOY_PACKAGENAME }} s3://${{ env.EB_PACK_S3_BUCKET_NAME }}/
+          echo " done "
+
+      - name:  CI
+        run: echo "DONE CI PART"
