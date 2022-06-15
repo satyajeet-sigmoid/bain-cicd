@@ -42,7 +42,7 @@ from flask import g, request, redirect, url_for
 
 @app.route('/')
 def test_environ():
-    return "testing session"
+    return "testing session with developer"
 
 @app.route('/set_email', methods=['GET', 'POST'])
 def set_email():
